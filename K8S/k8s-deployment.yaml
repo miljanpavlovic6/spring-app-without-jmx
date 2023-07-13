@@ -1,0 +1,48 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: appwithoutjmx
+  namespace: development
+  labels:
+    app: app-appwithoutjmx
+spec:
+  selector:
+    matchLabels:
+      app: appwithoutjmx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: appwithoutjmx
+    spec:
+      containers:
+        - name: appwithoutjmx
+          image: docker.io/miljanpavlovic/miljanpavlovic/appwithoutjmx:v1
+          ports:
+            - containerPort: 8099
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8099
+            initialDelaySeconds: 5
+            periodSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8099
+            initialDelaySeconds: 5
+            periodSeconds: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appwithoutjmx-service
+  namespace: test
+spec:
+  selector:
+    app: appwithoutjmx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8099
+  type: LoadBalancer
