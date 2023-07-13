@@ -2,7 +2,7 @@ apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
   name: appwithoutjmx
-  namespace: development
+  namespace: test
   labels:
     app: app-appwithoutjmx
 spec:
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: appwithoutjmx
-          image: docker.io/miljanpavlovic/miljanpavlovic/appwithoutjmx:v1
+          image: docker.io/miljanpavlovic/appwithoutjmx:v1
           ports:
             - containerPort: 8099
           livenessProbe:
